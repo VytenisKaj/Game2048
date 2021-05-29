@@ -9,7 +9,6 @@ class Action
         Action();
         virtual ~Action();
         virtual void run(Game2048* game) = 0;
-
 };
 
 #endif // ACTION_H

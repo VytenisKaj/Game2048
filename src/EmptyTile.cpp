@@ -11,6 +11,7 @@ EmptyTile::EmptyTile(int x, int y) :  Tile(0, x, y)
 
 string EmptyTile::toString(){
     std::stringstream ss;
-    ss << setw(5) << "x";
+
+    ss << setw(5) << (char)176;
     return ss.str();
 }

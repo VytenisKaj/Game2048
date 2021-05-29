@@ -4,7 +4,7 @@
 #include "Action.h"
 
 
-class Game2048::Left : public Action
+class Left : public Action
 {
     public:
         Left();

@@ -10,9 +10,6 @@ class ValueTile : public Tile
         ValueTile(int value, int x, int y);
         std::string toString();
 
-    protected:
-
-    private:
 };
 
 #endif // VALUETILE_H

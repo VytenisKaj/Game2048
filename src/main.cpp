@@ -1,23 +1,14 @@
 #include<iostream>
 #include"game2048.h"
-#include"Right.h"
+#include<string>
 
 using namespace std;
 
-int main()
-{
+int main(){
+
     Game2048* game = new Game2048;
-
-    for(int i = 0; i < 3; ++i){
-        game->showBoard();
-        game->moveLeft();
-        cout << endl;
-        game->showBoard();
-        game->moveRight();
-        cout << endl;
-    }
-
-
+    game->run();
     delete game;
+
     return 0;
 }
