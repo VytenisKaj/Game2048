@@ -15,7 +15,7 @@ void Down::run(Game2048* game){
                 while(x + 1 != BOARD_SIZE){
                     if(dynamic_cast<ValueTile*>(game->board[x+1][j])){
                         game->mergeTiles(&(game->board[x][j]), &(game->board[x+1][j]), this);
-                        --x; // fix later, if merge didnt happen
+                        --x; 
                         break;
                     }
                     std::swap(game->board[x][j],game->board[x+1][j]);

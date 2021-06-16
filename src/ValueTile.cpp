@@ -1,6 +1,5 @@
 #include "ValueTile.h"
 #include<sstream>
-#include<iomanip>
 
 using namespace std;
 
@@ -11,7 +10,7 @@ ValueTile::ValueTile(int value, int x, int y) : Tile(value, x, y)
 
 string ValueTile::toString(){
     std::stringstream ss;
-    ss << setw(5) << value;
+    ss << value;
     return ss.str();
 }
 

@@ -8,7 +8,6 @@
 #include"Left.h"
 #include"Up.h"
 #include"Down.h"
-#include<memory>
 
 #include<iomanip>
 
@@ -26,6 +25,7 @@ Game2048::Game2048()
     actions[3] = new Down;
     score = 0;
     isActive = true;
+    highestTileValue = 2;
 }
 
 Game2048::~Game2048(){
@@ -33,11 +33,7 @@ Game2048::~Game2048(){
     for(int i = 0; i < ACTION_AMOUNT; ++i){
         delete actions[i];
     }
-    for(int i = 0; i < BOARD_SIZE; ++i){
-        for(int j = 0; j < BOARD_SIZE; ++j){
-                delete board[i][j];
-        }
-    }
+    deleteBoard();
 }
 
 void Game2048::initBoard(){
@@ -45,11 +41,12 @@ void Game2048::initBoard(){
         for(int j = 0; j < BOARD_SIZE; ++j){
                 used[i][j] = 0;
                 board[i][j] = new EmptyTile(i,j);
-                //unique_ptr<Tile> board(board[i][j]);
         }
     }
 }
 
+
+// Not used with GUI, console application method
 void Game2048::showBoard(){
     string temp = "Score: " + to_string(score);
     cout << setw(20) << temp << "\n" << endl;
@@ -98,7 +95,7 @@ void Game2048::addValueTile(){
     }
     int x = rand() % BOARD_SIZE;
     int y = rand() % BOARD_SIZE;
-    while( used[x][y] == 1){
+    while( used[x][y] == 1 || dynamic_cast<ValueTile*>(board[x][y])){ // due to used[][] bugs, this had a possibility to delete existing ValueTiles. Once bugs are fixed, dynamic_cast can be removed
         x = rand() % BOARD_SIZE;
         y = rand() % BOARD_SIZE;
     }
@@ -116,6 +113,7 @@ void Game2048::mergeTiles(Tile** first, Tile** second, Action* action){
     }
     int newVal = (*first)->getValue() * 2;
     score += newVal;
+    highestTileValue = newVal > highestTileValue ? newVal : highestTileValue;
     int fX = (*first)->getX();
     int fY = (*first)->getY();
     int sX = (*second)->getX();
@@ -124,9 +122,9 @@ void Game2048::mergeTiles(Tile** first, Tile** second, Action* action){
     if(dynamic_cast<Left*>(action) || dynamic_cast<Up*>(action)){
         delete *first;
         delete *second;
+        *first = new EmptyTile(sX, sY); 
+        used[fX][fY] = 0; // Possible location of bugs related to used[][] containing wrong information
         *second = new ValueTile(newVal, fX, fY);
-        *first = new EmptyTile(sX, sY);
-        used[fX][fY] = 0;
     }
 
     if(dynamic_cast<Right*>(action) || dynamic_cast<Down*>(action)){
@@ -157,24 +155,8 @@ void Game2048::moveDown(){
 }
 
 void Game2048::run(){
-    string input;
     while(isActive){
-        system("cls");
-        this->showBoard();
-        cin >> input;
-        if(input == "w"){
-            this->moveUp();
-        }
-        if(input == "s"){
-            this->moveDown();
-        }
-        if(input == "d"){
-            this->moveRight();
-        }
-        if(input == "a"){
-            this->moveLeft();
-        }
-
+       
     }
 }
 
@@ -182,9 +164,48 @@ bool Game2048::freeSpaceExist(){
     for(int i = 0; i < BOARD_SIZE; ++i){
         for(int j = 0; j < BOARD_SIZE; ++j){
             if(used[i][j] == 0){
-                return true;
+                if (dynamic_cast<EmptyTile*>(board[i][j])) { // Because of used[][] bugs, game freezed. 'if' can be removed once bugs are fixed.
+                    return true;
+                }
             }
         }
     }
     return false;
+}
+
+bool Game2048::getIsActive() {
+    return isActive;
+}
+
+int Game2048::getScore() {
+    return score;
+}
+
+void Game2048::resetGame() {
+    deleteBoard();
+    initBoard();
+    initGame();
+    isActive = true;
+}
+
+void Game2048::deleteBoard() {
+
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        for (int j = 0; j < BOARD_SIZE; ++j) {
+            delete board[i][j];
+        }
+    }
+}
+
+int Game2048::getHighestTileValue() {
+    return highestTileValue;
+}
+
+void Game2048::resetScore() {
+    score = 0;
+}
+
+void Game2048::resetHighestTileValue()
+{
+    this->highestTileValue = 2;
 }
